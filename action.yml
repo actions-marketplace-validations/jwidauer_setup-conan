@@ -1,0 +1,36 @@
+name: 'Setup Conan'
+description: 'Set up the Conan package manager'
+author: 'Jakob Widauer'
+
+inputs:
+  version:
+    description: 'Conan version to use'
+    default: ''
+  config-git-repository:
+    description: 'Git repository to use when installing the Conan configuration'
+    default: ''
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install latest Conan version
+      shell: bash
+      if: ${{ inputs.version == '' }}
+      run: |
+          pip install conan
+
+    - name: Install Conan version ${{ inputs.version }}
+      shell: bash
+      if: ${{ inputs.version != '' }}
+      run: |
+          pip install conan=="${{ inputs.version }}"
+
+    - name: Install Conan configuration
+      shell: bash
+      if: ${{ inputs.config-git-repository != '' }}
+      run: |
+          conan config install ${{ inputs.config-git-repository }}
+
+branding:
+  icon: 'package'
+  color: 'blue'
